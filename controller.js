@@ -1,42 +1,37 @@
-const User = require('./model');
-
+// controller.js
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('./model'); // Import your Sequelize User model here
+//app.use(express.json());
 module.exports = {
-    addUser: (req, res) => {
-        const Name = req.body.name;
-        const Email = req.body.email;
-        const Password = req.body.password;
+    addUser: async (req, res) => {
+        const { email, password } = req.body;
+        
 
-        // Define the criteria to check if the user with the same email exists
-        const criteria = {
-            Email: Email,
-        };
+        try {
+            // Find the user by email
+            const user = await User.findOne({ where: { email } });
 
-        // Check if a user with the given email already exists
-        User.findOne({
-            where: criteria,
-        })
-        .then((existingUser) => {
-            if (existingUser) {
-                // A user with the same email already exists
-                res.status(400).json({ message: 'User with this email already exists' });
-            } else {
-                // User does not exist, you can proceed to create it
-                User.create({
-                    Name: Name,
-                    Email: Email,
-                    Password: Password,
-                })
-                .then((user) => {
-                    res.status(201).json({ message: 'User created successfully', user: user });
-                })
-                .catch((error) => {
-                    res.status(500).json({ message: 'Failed to create user', error: error });
-                });
+            if (!user) {
+                return res.status(401).json({ message: 'User does not exist' });
             }
-        })
-        .catch((error) => {
-            console.error('Error checking for existing user:', error);
-            res.status(500).json({ message: 'Failed to check for existing user', error: error });
-        });
+
+            // Compare the provided password with the hashed password
+            const isPasswordMatch = await bcrypt.compare(password, user.Password);
+
+            if (isPasswordMatch) {
+                // Generate a JWT token
+                const token = jwt.sign({ userId: user.id }, 'efagiueafhafgciegiuegwagefiug');
+
+                // Send the token as a response
+                res.status(200).json({ token });
+            } else {
+                // Passwords do not match
+                return res.status(401).json({ message: 'Invalid email or password' });
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+            return res.status(500).json({ message: 'Login failed', error: error.message });
+        }
     }
 };

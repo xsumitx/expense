@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Form</title>
+</head>
+<body>
+    <form action="/expense" method="POST" id="login-form2">
+        <label for="quantity">Name</label>
+        <input type="text" id="quantity" name="quantity" required>
+        
+        <label for="item">Item</label>
+        <input type="text" id="item" name="item" required>
+        
+        <label for="price">Price</label>
+        <input type="number" id="price" name="price" required>
+        
+        <button type="submit" id="postButton">Submit</button>
+    </form>
+    <div id="pagination">
+        <button type="button" class="page" data-page="1">1</button>
+        <button type="button" class="page" data-page="2">2</button>
+        <button type="button" class="page" data-page="3">3</button>
+        <button type="button" class="page" data-page="4">4</button>
+        <button type="button" class="page" data-page="5">5</button>
+    </div>
+    <button type="submit" id="buypremium">Buy premium</button>
+    <button type="submit" id="leaderboard">LeaderBoard</button>
+    <button type="submit" id="download">Download Expenses</button>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script type="text/javascript" src="./expense.js"></script>
+</body>
+
